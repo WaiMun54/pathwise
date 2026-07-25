@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PathWise - AI-Driven Career Platform</title>
+    <!-- Lucide Icons CDN for crisp UI icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-main: #f4f7f6;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --primary-teal: #0d9488;
+            --primary-dark: #0f172a;
+            --accent-yellow: #eab308;
+            --border-color: #e2e8f0;
+            --sidebar-width: 260px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- SIDEBAR NAVIGATION --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--primary-dark);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .brand {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            background-color: #07162c; 
+        }
+
+        .brand-logo-img {
+            width: 100%;
+            max-width: 180px;
+            height: auto;
+            max-height: 50px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .nav-links {
+            list-style: none;
+            padding: 1rem 0;
+            flex-grow: 1;
+        }
+
+        .nav-item {
+            padding: 0.85rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #cbd5e1;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: var(--primary-teal);
+            color: #fff;
+            border-left: 4px solid var(--accent-yellow);
+        }
+
+        .user-profile {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-teal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* --- MAIN CONTENT AREA --- */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex-grow: 1;
+            padding: 2rem 3rem;
+            max-width: calc(100vw - var(--sidebar-width));
+        }
+
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .top-header h1 {
+            font-size: 1.75rem;
+            color: var(--primary-dark);
+        }
+
+        .top-header p { color: var(--text-muted); font-size: 0.95rem; }
+
+        /* --- TAB PANELS --- */
+        .tab-pane { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .tab-pane.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- UI COMPONENTS & CARDS --- */
+        .card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+            border: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: 0.2s;
+        }
+
+        .btn-primary { background-color: var(--primary-teal); color: #fff; }
+        .btn-primary:hover { background-color: #0f766e; }
+        .btn-secondary { background-color: #f1f5f9; color: var(--text-main); }
+        .btn-secondary:hover { background-color: #e2e8f0; }
+        .btn-yellow { background-color: var(--accent-yellow); color: #000; }
+        .btn-yellow:hover { background-color: #ca8a04; }
+
+        .progress-bar-bg {
+            background-color: #e2e8f0;
+            border-radius: 999px;
+            height: 10px;
+            width: 100%;
+            overflow: hidden;
+            margin: 0.5rem 0 1rem 0;
+        }
+
+        .progress-bar-fill {
+            background-color: var(--primary-teal);
+            height: 100%;
+            border-radius: 999px;
+        }
+
+        .tag {
+            background: #f1f5f9;
+            color: var(--text-muted);
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-right: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        /* --- SKILL ASSESSMENT SUBTABS --- */
+        .assessment-container {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .subtab-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .subtab-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.85rem 1rem;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .subtab-btn:hover {
+            background: #e2e8f0;
+            color: var(--text-main);
+        }
+
+        .subtab-btn.active {
+            background: var(--accent-yellow);
+            color: #000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .subtab-pane { display: none; }
+        .subtab-pane.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+
+        /* --- VIEW 1: LANDING HERO --- */
+        .hero-section {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: #fff;
+            padding: 4rem;
+            border-radius: 16px;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .hero-title { font-size: 3rem; line-height: 1.2; margin-bottom: 1.5rem; }
+        .hero-title span { color: #2dd4bf; }
+        .hero-subtitle { color: #94a3b8; font-size: 1.1rem; margin-bottom: 2rem; }
+        
+        .hero-card-floating {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        /* --- VIEW 4: STEPPER --- */
+        .stepper {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin: 2rem 0 3rem 0;
+        }
+        .stepper::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 5%;
+            width: 90%;
+            height: 4px;
+            background: #e2e8f0;
+            z-index: 1;
+        }
+        .step {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            width: 18%;
+        }
+        .step-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #fff;
+            border: 4px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem auto;
+            font-weight: bold;
+            color: var(--text-muted);
+        }
+        .step.completed .step-circle { border-color: var(--primary-teal); background: var(--primary-teal); color: #fff; }
+        .step.active .step-circle { border-color: var(--accent-yellow); color: var(--accent-yellow); }
+
+        /* --- VIEW 5: JOB FILTERS --- */
+        .job-layout { display: grid; grid-template-columns: 240px 1fr; gap: 2rem; }
+        .filter-group { margin-bottom: 1.5rem; }
+        .filter-group h4 { margin-bottom: 0.75rem; font-size: 0.95rem; }
+        .filter-label { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-muted); cursor: pointer; }
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            background: #fff;
+        }
+
+        @media (max-width: 1024px) {
+            .grid-2, .grid-3, .hero-section, .job-layout, .assessment-container { grid-template-columns: 1fr; }
+            .sidebar { width: 70px; }
+            .nav-item span, .user-profile div, .brand-logo-img { display: none; }
+            .main-content { margin-left: 70px; max-width: calc(100vw - 70px); padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="sidebar">
+        <div class="brand">
+            <img src="ChatGPT Image Jul 25, 2026, 04_52_17 PM.png" alt="PathWise Logo" class="brand-logo-img">
+        </div>
+        <ul class="nav-links">
+            <li class="nav-item active" onclick="switchTab('landing', this)">
+                <i data-lucide="home"></i> <span>Home / AI Insights</span>
+            </li>
+            <li class="nav-item" onclick="switchTab('dashboard', this)">
+                <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
+            </li>
+            <li class="nav-item" onclick="switchTab('skills', this)">
+                <i data-lucide="check-circle-2"></i> <span>Skill Assessment</span>
+            </li>
+            <li class="nav-item" onclick="switchTab('learning', this)">
+                <i data-lucide="book-open"></i> <span>Learning Pathway</span>
+            </li>
+            <li class="nav-item" onclick="switchTab('jobs', this)">
+                <i data-lucide="briefcase"></i> <span>Job Application</span>
+            </li>
+        </ul>
+        <div class="user-profile">
+            <div class="avatar">AM</div>
+            <div>
+                <div style="font-weight: 600; font-size: 0.9rem;">Alex Morgan</div>
+                <div style="font-size: 0.75rem; color: #94a3b8;">Candidate</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- =======================================================
+             VIEW 1: LANDING PAGE 
+        ======================================================== -->
+        <div id="landing" class="tab-pane active">
+            <div class="hero-section">
+                <div>
+                    <span style="background: rgba(45,212,191,0.1); color: #2dd4bf; padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; display: inline-block; margin-bottom: 1rem;">
+                        ✨ AI-Powered Guidance
+                    </span>
+                    <h1 class="hero-title">Empower Your Future with <span>AI-Driven</span> Career Insights</h1>
+                    <p class="hero-subtitle">Smart guidance to help young adults discover the right career path and build a future they love with PathWise.</p>
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn btn-primary" onclick="document.querySelectorAll('.nav-item')[1].click()">
+                            <i data-lucide="send"></i> Get Started
+                        </button>
+                        <button class="btn btn-yellow" onclick="document.querySelectorAll('.nav-item')[4].click()">
+                            <i data-lucide="star"></i> Explore Careers
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <div class="hero-card-floating">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: #fff;">
+                            <span style="font-weight: 600;"><i data-lucide="briefcase" style="display:inline; width:16px;"></i> Top Career Matches</span>
+                            <span style="color: #2dd4bf;">AI Verified</span>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.25rem;">
+                                <span>Data Scientist</span> <span style="color: #2dd4bf;">98%</span>
+                            </div>
+                            <div class="progress-bar-bg" style="background: rgba(255,255,255,0.1);"><div class="progress-bar-fill" style="width: 98%; background: #2dd4bf;"></div></div>
+
+                            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.25rem;">
+                                <span>Product Manager</span> <span style="color: #2dd4bf;">95%</span>
+                            </div>
+                            <div class="progress-bar-bg" style="background: rgba(255,255,255,0.1);"><div class="progress-bar-fill" style="width: 95%; background: #2dd4bf;"></div></div>
+
+                            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.25rem;">
+                                <span>UX Designer</span> <span style="color: #2dd4bf;">92%</span>
+                            </div>
+                            <div class="progress-bar-bg" style="background: rgba(255,255,255,0.1);"><div class="progress-bar-fill" style="width: 92%; background: #2dd4bf;"></div></div>
+                        </div>
+                    </div>
+                    <div class="hero-card-floating" style="display: flex; align-items: center; justify-content: space-between;">
+                        <div>
+                            <div style="font-size: 0.85rem; color: #94a3b8;">Skills Strength</div>
+                            <div style="font-size: 1.5rem; font-weight: bold; color: #fff;">85% <span style="font-size: 0.8rem; color: #2dd4bf; font-weight: normal;">Keep growing!</span></div>
+                        </div>
+                        <i data-lucide="trending-up" style="color: #2dd4bf; width: 32px; height: 32px;"></i>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 3rem; color: var(--text-muted); font-size: 0.9rem;">
+                <p>Trusted by students and young professionals across top learning hubs</p>
+                <div style="display: flex; justify-content: center; gap: 3rem; margin-top: 1rem; opacity: 0.6; font-weight: bold; font-size: 1.1rem;">
+                    <span>Google</span> <span>Microsoft</span> <span>coursera</span> <span>Linked<span style="background:#0077b5; color:#fff; padding:0 2px; border-radius:2px;">in</span></span> <span>aws</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- =======================================================
+             VIEW 2: DASHBOARD 
+        ======================================================== -->
+        <div id="dashboard" class="tab-pane">
+            <div class="top-header">
+                <div>
+                    <h1>Welcome back, Alex!</h1>
+                    <p>Here's your career readiness overview.</p>
+                </div>
+                <button class="btn btn-primary" onclick="alert('Generating your detailed AI Readiness Report...')">
+                    <i data-lucide="file-text"></i> View Detailed Report
+                </button>
+            </div>
+
+            <div class="grid-2">
+                <div class="card" style="display: flex; align-items: center; gap: 2rem;">
+                    <div style="position: relative; width: 140px; height: 140px; border-radius: 50%; background: conic-gradient(var(--primary-teal) 67%, #e2e8f0 0); display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 110px; height: 110px; background: #fff; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <span style="font-size: 1.75rem; font-weight: 800; color: var(--primary-dark);">67%</span>
+                            <span style="font-size: 0.75rem; color: var(--primary-teal); font-weight: 600;">Career Ready</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 style="margin-bottom: 0.5rem; color: var(--primary-dark);">You're making great progress!</h3>
+                        <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem;">Keep building your skills and completing assessments to become fully career ready.</p>
+                        <span style="color: var(--primary-teal); font-weight: 600; cursor: pointer; font-size: 0.9rem;">📈 View Growth Analytics &rarr;</span>
+                    </div>
+                </div>
+
+                <div class="card" style="background: var(--primary-dark); color: #fff;">
+                    <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">Quick Actions</h3>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <button class="btn btn-primary" style="justify-content: space-between; width: 100%;" onclick="document.querySelectorAll('.nav-item')[2].click()">
+                            <span><i data-lucide="check-square" style="display:inline; width:18px;"></i> Take Assessment</span> &gt;
+                        </button>
+                        <button class="btn" style="background: rgba(255,255,255,0.1); color: #fff; justify-content: space-between; width: 100%;" onclick="document.querySelectorAll('.nav-item')[4].click()">
+                            <span><i data-lucide="compass" style="display:inline; width:18px;"></i> Browse Careers</span> &gt;
+                        </button>
+                        <button class="btn" style="background: rgba(255,255,255,0.1); color: #fff; justify-content: space-between; width: 100%;" onclick="document.querySelectorAll('.nav-item')[3].click()">
+                            <span><i data-lucide="book-open" style="display:inline; width:18px;"></i> Find Courses</span> &gt;
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-3">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600; color: var(--text-muted);"><i data-lucide="code" style="display:inline; width:18px; color:var(--primary-teal);"></i> Technical Skills</span>
+                        <span style="font-size: 1.25rem; font-weight: bold; color: var(--primary-teal);">75%</span>
+                    </div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 75%;"></div></div>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Strong foundation! Keep building advanced skills.</p>
+                    <a href="#" style="color: var(--primary-teal); font-size: 0.85rem; font-weight: 600; text-decoration: none;">View Details &gt;</a>
+                </div>
+
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600; color: var(--text-muted);"><i data-lucide="users" style="display:inline; width:18px; color:var(--accent-yellow);"></i> Soft Skills</span>
+                        <span style="font-size: 1.25rem; font-weight: bold; color: var(--accent-yellow);">60%</span>
+                    </div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 60%; background: var(--accent-yellow);"></div></div>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Good progress! Focus on communication & leadership.</p>
+                    <a href="#" style="color: var(--primary-teal); font-size: 0.85rem; font-weight: 600; text-decoration: none;">View Details &gt;</a>
+                </div>
+
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600; color: var(--text-muted);"><i data-lucide="building" style="display:inline; width:18px; color:#3b82f6;"></i> Industry Knowledge</span>
+                        <span style="font-size: 1.25rem; font-weight: bold; color: #3b82f6;">50%</span>
+                    </div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 50%; background: #3b82f6;"></div></div>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Keep exploring industry trends and best practices.</p>
+                    <a href="#" style="color: var(--primary-teal); font-size: 0.85rem; font-weight: 600; text-decoration: none;">View Details &gt;</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- =======================================================
+             VIEW 3: SKILL ASSESSMENT 
+        ======================================================== -->
+        <div id="skills" class="tab-pane">
+            <div class="top-header">
+                <div>
+                    <span style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Skill Assessment</span>
+                    <h1>Results</h1>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem; background: #fff; padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <i data-lucide="bar-chart-2" style="color: var(--primary-teal); width: 20px;"></i>
+                    <div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Assessment Completed</div>
+                        <div style="font-size: 0.85rem; font-weight: 600;">May 20, 2025</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="assessment-container">
+                <div class="subtab-menu">
+                    <button class="subtab-btn active" onclick="switchSubTab('tech-pane', this)">
+                        <i data-lucide="code" style="width: 18px;"></i> Technical
+                    </button>
+                    <button class="subtab-btn" onclick="switchSubTab('soft-pane', this)">
+                        <i data-lucide="users" style="width: 18px;"></i> Soft Skills
+                    </button>
+                    <button class="subtab-btn" onclick="switchSubTab('industry-pane', this)">
+                        <i data-lucide="briefcase" style="width: 18px;"></i> Industry-Specific
+                    </button>
+                </div>
+
+                <div>
+                    <div id="tech-pane" class="subtab-pane active">
+                        <div class="grid-2" style="margin-bottom: 1.5rem;">
+                            <div class="card" style="text-align: center; margin-bottom: 0;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                                    <h3 style="text-align: left;">Skill Overview</h3>
+                                    <i data-lucide="info" style="color: var(--text-muted); width: 18px; cursor: pointer;"></i>
+                                </div>
+                                <div style="width: 280px; height: 280px; margin: 0 auto; position: relative;">
+                                    <!-- Updated Hexagon Radar Chart Matching Screenshot exactly -->
+                                    <svg viewBox="0 0 200 200" style="width: 100%; height: 100%; overflow: visible;">
+                                        <!-- Background Hexagon Web Grids (Levels 0, 20, 40, 60, 80, 100) -->
+                                        <!-- Center point is (100, 100). Radius for 100% is 70px. -->
+                                        <!-- Angles (Clockwise from top/12 o'clock): 
+                                             - Communication: -90° (Top: 100, 30)
+                                             - Technical Skills: -30° (Top-Right: 160.62, 65)
+                                             - Problem Solving: 30° (Bottom-Right: 160.62, 135)
+                                             - Leadership: 90° (Bottom: 100, 170)
+                                             - Data Analysis: 150° (Bottom-Left: 39.38, 135)
+                                             - Creativity: 210° (Top-Left: 39.38, 65)
+                                        -->
+                                        <!-- Level 100% -->
+                                        <polygon points="100,30 160.62,65 160.62,135 100,170 39.38,135 39.38,65" fill="none" stroke="var(--border-color)" stroke-width="1"></polygon>
+                                        <!-- Level 80% -->
+                                        <polygon points="100,44 148.5,72 148.5,128 100,156 51.5,128 51.5,72" fill="none" stroke="var(--border-color)" stroke-width="0.8" stroke-dasharray="2,2"></polygon>
+                                        <!-- Level 60% -->
+                                        <polygon points="100,58 136.37,79 136.37,121 100,142 63.63,121 63.63,79" fill="none" stroke="var(--border-color)" stroke-width="0.8" stroke-dasharray="2,2"></polygon>
+                                        <!-- Level 40% -->
+                                        <polygon points="100,72 124.25,86 124.25,114 100,128 75.75,114 75.75,86" fill="none" stroke="var(--border-color)" stroke-width="0.8" stroke-dasharray="2,2"></polygon>
+                                        <!-- Level 20% -->
+                                        <polygon points="100,86 112.12,93 112.12,107 100,114 87.88,107 87.88,93" fill="none" stroke="var(--border-color)" stroke-width="0.8" stroke-dasharray="2,2"></polygon>
+                                        
+                                        <!-- Axis Lines -->
+                                        <line x1="100" y1="100" x2="100" y2="30" stroke="var(--border-color)" stroke-width="0.8"></line>
+                                        <line x1="100" y1="100" x2="160.62" y2="65" stroke="var(--border-color)" stroke-width="0.8"></line>
+                                        <line x1="100" y1="100" x2="160.62" y2="135" stroke="var(--border-color)" stroke-width="0.8"></line>
+                                        <line x1="100" y1="100" x2="100" y2="170" stroke="var(--border-color)" stroke-width="0.8"></line>
+                                        <line x1="100" y1="100" x2="39.38" y2="135" stroke="var(--border-color)" stroke-width="0.8"></line>
+                                        <line x1="100" y1="100" x2="39.38" y2="65" stroke="var(--border-color)" stroke-width="0.8"></line>
+
+                                        <!-- Scale Text Labels Inside Chart -->
+                                        <text x="103" y="85" font-size="7" fill="var(--text-muted)">20</text>
+                                        <text x="103" y="71" font-size="7" fill="var(--text-muted)">40</text>
+                                        <text x="103" y="57" font-size="7" fill="var(--text-muted)">60</text>
+                                        <text x="103" y="43" font-size="7" fill="var(--text-muted)">80</text>
+                                        <text x="103" y="29" font-size="7" fill="var(--text-muted)">100</text>
+
+                                        <!-- Required Skills Polygon (Yellow border outline) -->
+                                        <polygon points="100,34 154,71 148,128 100,158 51,126 48,70" 
+                                                 fill="none" 
+                                                 stroke="var(--accent-yellow)" 
+                                                 stroke-width="1.5">
+                                        </polygon>
+
+                                        <!-- Your Skills Polygon (Teal filled shape) -->
+                                        <polygon points="100,42 142,75 138,122 100,148 60,120 56,74" 
+                                                 fill="rgba(13,148,136,0.3)" 
+                                                 stroke="var(--primary-teal)" 
+                                                 stroke-width="2">
+                                        </polygon>
+
+                                        <!-- Vertex dots for Your Skills -->
+                                        <circle cx="100" cy="42" r="3" fill="var(--primary-teal)"></circle>
+                                        <circle cx="142" cy="75" r="3" fill="var(--primary-teal)"></circle>
+                                        <circle cx="138" cy="122" r="3" fill="var(--primary-teal)"></circle>
+                                        <circle cx="100" cy="148" r="3" fill="var(--primary-teal)"></circle>
+                                        <circle cx="60" cy="120" r="3" fill="var(--primary-teal)"></circle>
+                                        <circle cx="56" cy="74" r="3" fill="var(--primary-teal)"></circle>
+
+                                        <!-- Vertex dots for Required Skills -->
+                                        <circle cx="100" cy="34" r="2.5" fill="var(--accent-yellow)"></circle>
+                                        <circle cx="154" cy="71" r="2.5" fill="var(--accent-yellow)"></circle>
+                                        <circle cx="148" cy="128" r="2.5" fill="var(--accent-yellow)"></circle>
+                                        <circle cx="100" cy="158" r="2.5" fill="var(--accent-yellow)"></circle>
+                                        <circle cx="51" cy="126" r="2.5" fill="var(--accent-yellow)"></circle>
+                                        <circle cx="48" cy="70" r="2.5" fill="var(--accent-yellow)"></circle>
+                                    </svg>
+
+                                    <!-- Absolute Positioned 6-Axis Labels matching screenshot exactly -->
+                                    <span style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); font-size: 0.75rem; font-weight: 600; color: var(--text-main);">Communication</span>
+                                    <span style="position: absolute; top: 58px; right: -36px; font-size: 0.75rem; font-weight: 600; color: var(--text-main);">Technical Skills</span>
+                                    <span style="position: absolute; bottom: 58px; right: -42px; font-size: 0.75rem; font-weight: 600; color: var(--text-main);">Problem Solving</span>
+                                    <span style="position: absolute; bottom: -14px; left: 50%; transform: translateX(-50%); font-size: 0.75rem; font-weight: 600; color: var(--text-main);">Leadership</span>
+                                    <span style="position: absolute; bottom: 58px; left: -42px; font-size: 0.75rem; font-weight: 600; color: var(--text-main);">Data Analysis</span>
+                                    <span style="position: absolute; top: 58px; left: -36px; font-size: 0.75rem; font-weight: 600; color: var(--text-main);">Creativity</span>
+                                </div>
+                                <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; font-size: 0.85rem;">
+                                    <span style="display:flex; align-items:center; gap:0.5rem;"><i style="width:12px; height:12px; background:var(--primary-teal); display:inline-block; border-radius:2px;"></i> Your Skills</span>
+                                    <span style="display:flex; align-items:center; gap:0.5rem;"><i style="width:12px; height:12px; background:var(--accent-yellow); display:inline-block; border-radius:2px;"></i> Required Skills</span>
+                                </div>
+                            </div>
+
+                            <div class="card" style="margin-bottom: 0;">
+                                <h3 style="margin-bottom: 1.5rem;">Technical Skills Breakdown</h3>
+                                <div style="margin-bottom: 1.25rem;">
+                                    <div style="display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 0.25rem;">
+                                        <span>Python</span> <span style="color: var(--primary-teal);">85%</span>
+                                    </div>
+                                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 85%;"></div></div>
+                                    <span style="font-size: 0.8rem; color: var(--primary-teal); font-weight: 600;">Advanced</span>
+                                </div>
+
+                                <div style="margin-bottom: 1.25rem;">
+                                    <div style="display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 0.25rem;">
+                                        <span>JavaScript</span> <span style="color: var(--primary-teal);">70%</span>
+                                    </div>
+                                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 70%;"></div></div>
+                                    <span style="font-size: 0.8rem; color: var(--primary-teal); font-weight: 600;">Intermediate</span>
+                                </div>
+
+                                <div style="margin-bottom: 1.5rem;">
+                                    <div style="display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 0.25rem;">
+                                        <span>SQL</span> <span style="color: var(--primary-teal);">60%</span>
+                                    </div>
+                                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 60%;"></div></div>
+                                    <span style="font-size: 0.8rem; color: var(--primary-teal); font-weight: 600;">Intermediate</span>
+                                </div>
+
+                                <button class="btn btn-secondary" style="width: 100%; justify-content: center;" onclick="alert('Opening full technical report...')">
+                                    <i data-lucide="file-text" style="width:16px;"></i> View Full Technical Report
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid-2">
+                            <div class="card" style="border-left: 4px solid #ef4444; margin-bottom: 0;">
+                                <h4 style="color: var(--text-main); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i data-lucide="alert-circle" style="color: #ef4444; width:18px;"></i> Skill Gaps Identified
+                                </h4>
+                                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.95rem;">
+                                    <li style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;"><span>• Communication</span> <strong style="color: #ef4444;">Gap: 10%</strong></li>
+                                    <li style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;"><span>• Leadership</span> <strong style="color: #ef4444;">Gap: 10%</strong></li>
+                                    <li style="display: flex; justify-content: space-between;"><span>• Creativity</span> <strong style="color: #ef4444;">Gap: 15%</strong></li>
+                                </ul>
+                            </div>
+
+                            <div class="card" style="border-left: 4px solid #3b82f6; margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between;">
+                                <div>
+                                    <h4 style="color: var(--text-main); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                        <i data-lucide="info" style="color: #3b82f6; width:18px;"></i> Recommended Actions
+                                    </h4>
+                                    <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">
+                                        <li>✓ Improve communication through public speaking or writing courses.</li>
+                                        <li>✓ Take leadership training or participate in team projects.</li>
+                                        <li>✓ Engage in creative problem-solving exercises and brainstorming sessions.</li>
+                                    </ul>
+                                </div>
+                                <button class="btn btn-yellow" style="margin-top: 1rem; width: 100%; justify-content: center;" onclick="document.querySelectorAll('.nav-item')[3].click()">
+                                    <i data-lucide="trending-up" style="width:16px;"></i> Recommended Actions
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="soft-pane" class="subtab-pane">
+                        <div class="card">
+                            <h3>Soft Skills Evaluation</h3>
+                            <p style="color: var(--text-muted); margin: 0.5rem 0 1.5rem 0;">Assessment score for interpersonal communication, teamwork, and problem framing.</p>
+                            
+                            <div style="margin-bottom: 1.25rem;">
+                                <div style="display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 0.25rem;">
+                                    <span>Verbal Communication & Active Listening</span> <span style="color: var(--accent-yellow);">75%</span>
+                                </div>
+                                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 75%; background: var(--accent-yellow);"></div></div>
+                            </div>
+
+                            <div style="margin-bottom: 1.25rem;">
+                                <div style="display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 0.25rem;">
+                                    <span>Team Collaboration & Empathy</span> <span style="color: var(--accent-yellow);">82%</span>
+                                </div>
+                                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 82%; background: var(--accent-yellow);"></div></div>
+                            </div>
+
+                            <div style="margin-bottom: 1.5rem;">
+                                <div style="display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 0.25rem;">
+                                    <span>Time Management & Adaptability</span> <span style="color: var(--accent-yellow);">68%</span>
+                                </div>
+                                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 68%; background: var(--accent-yellow);"></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="industry-pane" class="subtab-pane">
+                        <div class="card">
+                            <h3>Industry-Specific Competencies</h3>
+                            <p style="color: var(--text-muted); margin: 0.5rem 0 1.5rem 0;">Benchmark alignment with modern tech, fintech, and digital product standards.</p>
+                            
+                            <div style="margin-bottom: 1.25rem;">
+                                <div style="display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 0.25rem;">
+                                    <span>Agile & Scrum Methodologies</span> <span style="color: #3b82f6;">80%</span>
+                                </div>
+                                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 80%; background: #3b82f6;"></div></div>
+                            </div>
+
+                            <div style="margin-bottom: 1.25rem;">
+                                <div style="display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 0.25rem;">
+                                    <span>Domain Compliance & Data Security</span> <span style="color: #3b82f6;">55%</span>
+                                </div>
+                                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 55%; background: #3b82f6;"></div></div>
+                            </div>
+
+                            <div style="margin-bottom: 1.5rem;">
+                                <div style="display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 0.25rem;">
+                                    <span>Product Lifecycle Knowledge</span> <span style="color: #3b82f6;">65%</span>
+                                </div>
+                                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 65%; background: #3b82f6;"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =======================================================
+             VIEW 4: LEARNING PATHWAY 
+        ======================================================== -->
+        <div id="learning" class="tab-pane">
+            <div class="top-header">
+                <div>
+                    <h1>My Learning Pathway</h1>
+                    <p>Track your progress and continue your learning journey.</p>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn btn-secondary"><i data-lucide="filter" style="width:16px;"></i> Filter Provider</button>
+                    <button class="btn btn-secondary"><i data-lucide="clock" style="width:16px;"></i> Duration</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="stepper">
+                    <div class="step completed">
+                        <div class="step-circle"><i data-lucide="check" style="width:16px;"></i></div>
+                        <div style="font-weight: 600; font-size: 0.9rem;">Foundation Skills</div>
+                        <div style="font-size: 0.75rem; color: var(--primary-teal);">Completed</div>
+                    </div>
+                    <div class="step active">
+                        <div class="step-circle">2</div>
+                        <div style="font-weight: 600; font-size: 0.9rem;">Intermediate Level</div>
+                        <div style="font-size: 0.75rem; color: var(--accent-yellow);">In Progress</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-circle"><i data-lucide="lock" style="width:16px;"></i></div>
+                        <div style="font-weight: 600; font-size: 0.9rem;">Advanced Cert</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Locked</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-circle"><i data-lucide="lock" style="width:16px;"></i></div>
+                        <div style="font-weight: 600; font-size: 0.9rem;">Portfolio Projects</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Locked</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-circle"><i data-lucide="lock" style="width:16px;"></i></div>
+                        <div style="font-weight: 600; font-size: 0.9rem;">Job Ready</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Locked</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2" style="grid-template-columns: 3fr 1fr;">
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3>Courses in This Path (12)</h3>
+                        <a href="#" style="color: var(--primary-teal); font-size: 0.85rem; text-decoration: none;">&#8634; Clear Filters</a>
+                    </div>
+                    <div class="grid-2" style="grid-template-columns: 1fr 1fr;">
+                        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; margin-bottom:0;">
+                            <div>
+                                <span class="tag" style="background:#e0f2fe; color:#0369a1;">Coursera</span>
+                                <h4 style="margin: 0.5rem 0;">Introduction to Python Programming</h4>
+                                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;"><i data-lucide="clock" style="width:14px; display:inline;"></i> 6 weeks • Beginner • ⭐ 4.5 (2,345)</p>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                                <span style="font-weight: bold; color: #16a34a;">Free</span>
+                                <button class="btn btn-yellow" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="enrollCourse(this)">Enroll Now</button>
+                            </div>
+                        </div>
+
+                        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; margin-bottom:0;">
+                            <div>
+                                <span class="tag" style="background:#fef3c7; color:#b45309;">LinkedIn Learning</span>
+                                <h4 style="margin: 0.5rem 0;">Python for Data Analysis & SQL</h4>
+                                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;"><i data-lucide="clock" style="width:14px; display:inline;"></i> 6 weeks • Beginner • ⭐ 4.5 (1,892)</p>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                                <span style="font-weight: bold; color: var(--primary-dark);">S$49.90</span>
+                                <button class="btn btn-yellow" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="enrollCourse(this)">Enroll Now</button>
+                            </div>
+                        </div>
+
+                        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; margin-bottom:0;">
+                            <div>
+                                <span class="tag" style="background:#fce7f3; color:#be185d;">SkillsFuture</span>
+                                <h4 style="margin: 0.5rem 0;">Advanced Database Architecture</h4>
+                                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;"><i data-lucide="clock" style="width:14px; display:inline;"></i> 8 weeks • Intermediate • ⭐ 4.8 (982)</p>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                                <span style="font-weight: bold; color: #16a34a; font-size: 0.85rem;">Free w/ SkillsFuture</span>
+                                <button class="btn btn-yellow" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="enrollCourse(this)">Enroll Now</button>
+                            </div>
+                        </div>
+
+                        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; margin-bottom:0;">
+                            <div>
+                                <span class="tag" style="background:#e0f2fe; color:#0369a1;">Coursera</span>
+                                <h4 style="margin: 0.5rem 0;">UX Research & Prototyping in Figma</h4>
+                                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;"><i data-lucide="clock" style="width:14px; display:inline;"></i> 4 weeks • Beginner • ⭐ 4.7 (3,110)</p>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                                <span style="font-weight: bold; color: var(--primary-dark);">S$59.00</span>
+                                <button class="btn btn-yellow" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="enrollCourse(this)">Enroll Now</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="card" style="text-align: center;">
+                        <h4 style="margin-bottom: 0.5rem;">Your Progress</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">3 of 12 courses completed</p>
+                        
+                        <div style="position: relative; width: 100px; height: 100px; border-radius: 50%; background: conic-gradient(var(--primary-teal) 25%, #e2e8f0 0); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto;">
+                            <div style="width: 75px; height: 75px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1rem;">
+                                25%
+                            </div>
+                        </div>
+
+                        <div style="text-align: left; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                            <span style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.75rem;">Recently Completed:</span>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;"><i data-lucide="check-circle" style="width:14px; color:#16a34a; display:inline;"></i> Python Basics (Coursera)</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;"><i data-lucide="check-circle" style="width:14px; color:#16a34a; display:inline;"></i> Variables & Data Types</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);"><i data-lucide="check-circle" style="width:14px; color:#16a34a; display:inline;"></i> Control Flow in Python</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =======================================================
+             VIEW 5: JOB APPLICATION 
+        ======================================================== -->
+        <div id="jobs" class="tab-pane">
+            <div class="top-header">
+                <div>
+                    <h1>Find Careers That Fit You</h1>
+                    <p>AI-matched opportunities based on your completed assessments.</p>
+                </div>
+                <div>
+                    <span style="font-size: 0.9rem; color: var(--text-muted); margin-right: 0.5rem;">Sort by:</span>
+                    <select id="sortSelect" onchange="filterJobs()" style="padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid var(--border-color); background: #fff; font-weight: 600; cursor: pointer;">
+                        <option value="match">Best Match (%)</option>
+                        <option value="salary">Highest Salary</option>
+                        <option value="recent">Most Recent</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="job-layout">
+                <!-- Filters Sidebar -->
+                <div class="card" style="align-self: start;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+                        <h3 style="font-size: 1.1rem;">Filters</h3>
+                        <span style="color: var(--primary-teal); font-size: 0.8rem; cursor: pointer; font-weight: 600;" onclick="resetFilters()">Reset All</span>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4>Industry</h4>
+                        <label class="filter-label"><input type="checkbox" class="filter-chk" data-category="industry" value="Technology" checked onchange="filterJobs()"> Technology</label>
+                        <label class="filter-label"><input type="checkbox" class="filter-chk" data-category="industry" value="Finance" checked onchange="filterJobs()"> Finance</label>
+                        <label class="filter-label"><input type="checkbox" class="filter-chk" data-category="industry" value="Healthcare" checked onchange="filterJobs()"> Healthcare</label>
+                        <label class="filter-label"><input type="checkbox" class="filter-chk" data-category="industry" value="Marketing" checked onchange="filterJobs()"> Marketing</label>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4>Experience Level</h4>
+                        <label class="filter-label"><input type="checkbox" class="filter-chk" data-category="experience" value="Entry Level" checked onchange="filterJobs()"> Entry Level</label>
+                        <label class="filter-label"><input type="checkbox" class="filter-chk" data-category="experience" value="Mid Level" checked onchange="filterJobs()"> Mid Level</label>
+                        <label class="filter-label"><input type="checkbox" class="filter-chk" data-category="experience" value="Senior Level" checked onchange="filterJobs()"> Senior Level</label>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4>Salary Range</h4>
+                        <label class="filter-label"><input type="checkbox" class="filter-chk" data-category="salary" value="under50k" checked onchange="filterJobs()"> Under $50K</label>
+                        <label class="filter-label"><input type="checkbox" class="filter-chk" data-category="salary" value="50to80k" checked onchange="filterJobs()"> $50K - $80K</label>
+                        <label class="filter-label"><input type="checkbox" class="filter-chk" data-category="salary" value="80to120k" checked onchange="filterJobs()"> $80K - $120K</label>
+                        <label class="filter-label"><input type="checkbox" class="filter-chk" data-category="salary" value="120kplus" checked onchange="filterJobs()"> $120K+</label>
+                    </div>
+                </div>
+
+                <!-- Job Cards Container -->
+                <div>
+                    <input type="text" id="jobSearchInput" class="search-input" placeholder="🔍 Search jobs, skills, or companies..." onkeyup="filterJobs()">
+
+                    <div id="jobGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <!-- Job 1 -->
+                        <div class="card job-card" 
+                             data-title="Data Analyst" 
+                             data-company="Deloitte" 
+                             data-industry="Finance" 
+                             data-experience="Entry Level" 
+                             data-salary-range="50to80k" 
+                             data-match="85" 
+                             data-salary-val="70000" 
+                             data-date="2026-06-15"
+                             style="margin-bottom:0;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                <div>
+                                    <h3 style="font-size: 1.15rem; color: var(--primary-dark);">Data Analyst</h3>
+                                    <span style="font-weight: 600; color: var(--text-muted); font-size: 0.9rem;">Deloitte</span>
+                                </div>
+                                <span style="background: #ccfbf1; color: var(--primary-teal); font-weight: bold; padding: 0.3rem 0.6rem; border-radius: 20px; font-size: 0.85rem;">85% Match</span>
+                            </div>
+                            <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; display: flex; gap: 1rem;">
+                                <span>💰 $60K - $80K</span>
+                                <span>📍 New York, NY</span>
+                            </div>
+                            <p style="font-size: 0.9rem; color: var(--text-main); margin-bottom: 1rem;">Analyze data sets to help drive business decisions and improve organizational performance.</p>
+                            <div style="margin-bottom: 1.5rem;">
+                                <span class="tag">Python</span><span class="tag">SQL</span><span class="tag">Excel</span><span class="tag">Tableau</span>
+                            </div>
+                            <div style="display: flex; gap: 0.75rem;">
+                                <button class="btn btn-secondary" style="flex: 1; justify-content: center;" onclick="toggleSave(this)"><i data-lucide="bookmark" style="width:16px;"></i> Save</button>
+                                <button class="btn btn-yellow" style="flex: 1; justify-content: center;" onclick="alert('Applying to Deloitte...')">Learn More &rarr;</button>
+                            </div>
+                        </div>
+
+                        <!-- Job 2 -->
+                        <div class="card job-card" 
+                             data-title="UX Designer" 
+                             data-company="Google" 
+                             data-industry="Technology" 
+                             data-experience="Mid Level" 
+                             data-salary-range="80to120k" 
+                             data-match="88" 
+                             data-salary-val="95000" 
+                             data-date="2026-07-20"
+                             style="margin-bottom:0;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                <div>
+                                    <h3 style="font-size: 1.15rem; color: var(--primary-dark);">UX Designer</h3>
+                                    <span style="font-weight: 600; color: var(--text-muted); font-size: 0.9rem;">Google</span>
+                                </div>
+                                <span style="background: #ccfbf1; color: var(--primary-teal); font-weight: bold; padding: 0.3rem 0.6rem; border-radius: 20px; font-size: 0.85rem;">88% Match</span>
+                            </div>
+                            <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; display: flex; gap: 1rem;">
+                                <span>💰 $75K - $110K</span>
+                                <span>📍 San Francisco, CA</span>
+                            </div>
+                            <p style="font-size: 0.9rem; color: var(--text-main); margin-bottom: 1rem;">Design intuitive, user-centric interfaces and experiences for next-gen web and mobile apps.</p>
+                            <div style="margin-bottom: 1.5rem;">
+                                <span class="tag">Figma</span><span class="tag">User Research</span><span class="tag">Prototyping</span>
+                            </div>
+                            <div style="display: flex; gap: 0.75rem;">
+                                <button class="btn btn-secondary" style="flex: 1; justify-content: center;" onclick="toggleSave(this)"><i data-lucide="bookmark" style="width:16px;"></i> Save</button>
+                                <button class="btn btn-yellow" style="flex: 1; justify-content: center;" onclick="alert('Applying to Google...')">Learn More &rarr;</button>
+                            </div>
+                        </div>
+
+                        <!-- Job 3 -->
+                        <div class="card job-card" 
+                             data-title="Software Engineer" 
+                             data-company="Microsoft" 
+                             data-industry="Technology" 
+                             data-experience="Mid Level" 
+                             data-salary-range="120kplus" 
+                             data-match="92" 
+                             data-salary-val="125000" 
+                             data-date="2026-07-24"
+                             style="margin-bottom:0;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                <div>
+                                    <h3 style="font-size: 1.15rem; color: var(--primary-dark);">Software Engineer</h3>
+                                    <span style="font-weight: 600; color: var(--text-muted); font-size: 0.9rem;">Microsoft</span>
+                                </div>
+                                <span style="background: #ccfbf1; color: var(--primary-teal); font-weight: bold; padding: 0.3rem 0.6rem; border-radius: 20px; font-size: 0.85rem;">92% Match</span>
+                            </div>
+                            <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; display: flex; gap: 1rem;">
+                                <span>💰 $90K - $130K</span>
+                                <span>📍 Redmond, WA</span>
+                            </div>
+                            <p style="font-size: 0.9rem; color: var(--text-main); margin-bottom: 1rem;">Build scalable cloud software solutions and collaborate on cutting-edge Azure technologies.</p>
+                            <div style="margin-bottom: 1.5rem;">
+                                <span class="tag">Python</span><span class="tag">JavaScript</span><span class="tag">Git</span><span class="tag">Azure</span>
+                            </div>
+                            <div style="display: flex; gap: 0.75rem;">
+                                <button class="btn btn-secondary" style="flex: 1; justify-content: center;" onclick="toggleSave(this)"><i data-lucide="bookmark" style="width:16px;"></i> Save</button>
+                                <button class="btn btn-yellow" style="flex: 1; justify-content: center;" onclick="alert('Applying to Microsoft...')">Learn More &rarr;</button>
+                            </div>
+                        </div>
+
+                        <!-- Job 4 -->
+                        <div class="card job-card" 
+                             data-title="Cloud Engineer" 
+                             data-company="Amazon Web Services" 
+                             data-industry="Technology" 
+                             data-experience="Senior Level" 
+                             data-salary-range="80to120k" 
+                             data-match="87" 
+                             data-salary-val="115000" 
+                             data-date="2026-07-10"
+                             style="margin-bottom:0;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                <div>
+                                    <h3 style="font-size: 1.15rem; color: var(--primary-dark);">Cloud Engineer</h3>
+                                    <span style="font-weight: 600; color: var(--text-muted); font-size: 0.9rem;">Amazon Web Services</span>
+                                </div>
+                                <span style="background: #ccfbf1; color: var(--primary-teal); font-weight: bold; padding: 0.3rem 0.6rem; border-radius: 20px; font-size: 0.85rem;">87% Match</span>
+                            </div>
+                            <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; display: flex; gap: 1rem;">
+                                <span>💰 $80K - $120K</span>
+                                <span>📍 Seattle, WA</span>
+                            </div>
+                            <p style="font-size: 0.9rem; color: var(--text-main); margin-bottom: 1rem;">Design, deploy, and manage distributed cloud infrastructure and automated serverless pipelines.</p>
+                            <div style="margin-bottom: 1.5rem;">
+                                <span class="tag">AWS</span><span class="tag">Docker</span><span class="tag">Terraform</span><span class="tag">Linux</span>
+                            </div>
+                            <div style="display: flex; gap: 0.75rem;">
+                                <button class="btn btn-secondary" style="flex: 1; justify-content: center;" onclick="toggleSave(this)"><i data-lucide="bookmark" style="width:16px;"></i> Save</button>
+                                <button class="btn btn-yellow" style="flex: 1; justify-content: center;" onclick="alert('Applying to AWS...')">Learn More &rarr;</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- No Results State Message -->
+                    <div id="noResults" style="display: none; text-align: center; padding: 3rem; color: var(--text-muted);">
+                        <i data-lucide="search-x" style="width: 48px; height: 48px; margin-bottom: 1rem; color: #cbd5e1;"></i>
+                        <h3>No matching careers found</h3>
+                        <p style="font-size: 0.9rem; margin-top: 0.5rem;">Try adjusting your search terms or selecting more filters.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- INTERACTIVE JAVASCRIPT -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Tab Switching Logic
+        function switchTab(tabId, navElement) {
+            const panes = document.querySelectorAll('.tab-pane');
+            panes.forEach(pane => pane.classList.remove('active'));
+
+            const navs = document.querySelectorAll('.nav-item');
+            navs.forEach(nav => nav.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            navElement.classList.add('active');
+
+            lucide.createIcons();
+            window.scrollTo(0, 0);
+        }
+
+        // Skill Assessment Subtab Switching Logic
+        function switchSubTab(paneId, btnElement) {
+            const panes = document.querySelectorAll('.subtab-pane');
+            panes.forEach(pane => pane.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.subtab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(paneId).classList.add('active');
+            btnElement.classList.add('active');
+
+            lucide.createIcons();
+        }
+
+        // Course Enrollment Toggle
+        function enrollCourse(button) {
+            if (button.innerText === "Enroll Now") {
+                button.innerText = "Enrolled ✓";
+                button.style.backgroundColor = "#16a34a";
+                button.style.color = "#fff";
+                alert("Successfully enrolled! This course has been added to your active learning pathway.");
+            } else {
+                button.innerText = "Enroll Now";
+                button.style.backgroundColor = "var(--accent-yellow)";
+                button.style.color = "#000";
+            }
+        }
+
+        // Save Job Bookmark Toggle
+        function toggleSave(button) {
+            if (button.style.backgroundColor === "rgb(13, 148, 136)" || button.style.backgroundColor === "var(--primary-teal)") {
+                button.style.backgroundColor = "#f1f5f9";
+                button.style.color = "var(--text-main)";
+                button.innerHTML = '<i data-lucide="bookmark" style="width:16px;"></i> Save';
+            } else {
+                button.style.backgroundColor = "var(--primary-teal)";
+                button.style.color = "#fff";
+                button.innerHTML = '<i data-lucide="check" style="width:16px;"></i> Saved';
+            }
+            lucide.createIcons();
+        }
+
+        // FULLY FUNCTIONAL JOB FILTERING & SORTING
+        function filterJobs() {
+            const searchInput = document.getElementById('jobSearchInput').value.toLowerCase();
+            const sortVal = document.getElementById('sortSelect').value;
+            const grid = document.getElementById('jobGrid');
+            const cards = Array.from(grid.getElementsByClassName('job-card'));
+            const noResults = document.getElementById('noResults');
+
+            const activeIndustries = Array.from(document.querySelectorAll('.filter-chk[data-category="industry"]:checked')).map(cb => cb.value);
+            const activeExperience = Array.from(document.querySelectorAll('.filter-chk[data-category="experience"]:checked')).map(cb => cb.value);
+            const activeSalary = Array.from(document.querySelectorAll('.filter-chk[data-category="salary"]:checked')).map(cb => cb.value);
+
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const title = card.getAttribute('data-title').toLowerCase();
+                const company = card.getAttribute('data-company').toLowerCase();
+                const text = card.innerText.toLowerCase();
+                
+                const industry = card.getAttribute('data-industry');
+                const experience = card.getAttribute('data-experience');
+                const salaryRange = card.getAttribute('data-salary-range');
+
+                const matchesSearch = title.includes(searchInput) || company.includes(searchInput) || text.includes(searchInput);
+                const matchesIndustry = activeIndustries.includes(industry);
+                const matchesExperience = activeExperience.includes(experience);
+                const matchesSalary = activeSalary.includes(salaryRange);
+
+                if (matchesSearch && matchesIndustry && matchesExperience && matchesSalary) {
+                    card.style.display = "block";
+                    visibleCount++;
+                } else {
+                    card.style.display = "none";
+                }
+            });
+
+            if (visibleCount === 0) {
+                noResults.style.display = "block";
+            } else {
+                noResults.style.display = "none";
+            }
+
+            cards.sort((a, b) => {
+                if (sortVal === 'match') {
+                    return parseInt(b.getAttribute('data-match')) - parseInt(a.getAttribute('data-match'));
+                } else if (sortVal === 'salary') {
+                    return parseInt(b.getAttribute('data-salary-val')) - parseInt(a.getAttribute('data-salary-val'));
+                } else if (sortVal === 'recent') {
+                    return new Date(b.getAttribute('data-date')) - new Date(a.getAttribute('data-date'));
+                }
+                return 0;
+            });
+
+    cards.forEach(card => grid.appendChild(card));
+        }
+
+        // Reset Filters Function
+        function resetFilters() {
+            document.getElementById('jobSearchInput').value = '';
+            document.getElementById('sortSelect').value = 'match';
+            const checkboxes = document.querySelectorAll('.filter-chk');
+            checkboxes.forEach(cb => cb.checked = true);
+            filterJobs();
+        }
+    </script>
+</body>
+</html>
