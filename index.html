@@ -267,21 +267,33 @@
             margin-bottom: 1rem;
         }
 
-        /* --- VIEW 4: STEPPER --- */
+        /* --- VIEW 4: STEPPER (UPDATED TO MATCH SCREENSHOT EXACTLY) --- */
         .stepper {
             display: flex;
             justify-content: space-between;
             position: relative;
             margin: 2rem 0 3rem 0;
         }
+        /* Background gray track connecting all 5 steps */
         .stepper::before {
             content: '';
             position: absolute;
             top: 20px;
-            left: 5%;
-            width: 90%;
+            left: 9%;
+            width: 82%;
             height: 4px;
             background: #e2e8f0;
+            z-index: 1;
+        }
+        /* Completed solid teal line connecting Step 1 to Step 2 */
+        .stepper::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 9%;
+            width: 20.5%;
+            height: 4px;
+            background: var(--primary-teal);
             z-index: 1;
         }
         .step {
@@ -295,16 +307,27 @@
             height: 44px;
             border-radius: 50%;
             background: #fff;
-            border: 4px solid #e2e8f0;
+            border: 3px solid #e2e8f0;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 0.5rem auto;
-            font-weight: bold;
+            font-weight: 700;
+            font-size: 1.1rem;
             color: var(--text-muted);
+            transition: all 0.3s ease;
         }
-        .step.completed .step-circle { border-color: var(--primary-teal); background: var(--primary-teal); color: #fff; }
-        .step.active .step-circle { border-color: var(--accent-yellow); color: var(--accent-yellow); }
+        .step.completed .step-circle { 
+            border-color: var(--primary-teal); 
+            background: var(--primary-teal); 
+            color: #fff; 
+        }
+        .step.active .step-circle { 
+            border-color: var(--accent-yellow); 
+            color: var(--accent-yellow); 
+            background: #fff;
+            box-shadow: 0 0 0 5px rgba(234, 179, 8, 0.18);
+        }
 
         /* --- VIEW 5: JOB FILTERS --- */
         .job-layout { display: grid; grid-template-columns: 240px 1fr; gap: 2rem; }
@@ -326,6 +349,8 @@
             .sidebar { width: 70px; }
             .nav-item span, .user-profile div, .brand-logo-img { display: none; }
             .main-content { margin-left: 70px; max-width: calc(100vw - 70px); padding: 1.5rem; }
+            .stepper::before { left: 10%; width: 80%; }
+            .stepper::after { left: 10%; width: 20%; }
         }
     </style>
 </head>
@@ -543,18 +568,8 @@
                                     <i data-lucide="info" style="color: var(--text-muted); width: 18px; cursor: pointer;"></i>
                                 </div>
                                 <div style="width: 280px; height: 280px; margin: 0 auto; position: relative;">
-                                    <!-- Updated Hexagon Radar Chart Matching Screenshot exactly -->
+                                    <!-- Hexagon Radar Chart -->
                                     <svg viewBox="0 0 200 200" style="width: 100%; height: 100%; overflow: visible;">
-                                        <!-- Background Hexagon Web Grids (Levels 0, 20, 40, 60, 80, 100) -->
-                                        <!-- Center point is (100, 100). Radius for 100% is 70px. -->
-                                        <!-- Angles (Clockwise from top/12 o'clock): 
-                                             - Communication: -90° (Top: 100, 30)
-                                             - Technical Skills: -30° (Top-Right: 160.62, 65)
-                                             - Problem Solving: 30° (Bottom-Right: 160.62, 135)
-                                             - Leadership: 90° (Bottom: 100, 170)
-                                             - Data Analysis: 150° (Bottom-Left: 39.38, 135)
-                                             - Creativity: 210° (Top-Left: 39.38, 65)
-                                        -->
                                         <!-- Level 100% -->
                                         <polygon points="100,30 160.62,65 160.62,135 100,170 39.38,135 39.38,65" fill="none" stroke="var(--border-color)" stroke-width="1"></polygon>
                                         <!-- Level 80% -->
@@ -581,14 +596,14 @@
                                         <text x="103" y="43" font-size="7" fill="var(--text-muted)">80</text>
                                         <text x="103" y="29" font-size="7" fill="var(--text-muted)">100</text>
 
-                                        <!-- Required Skills Polygon (Yellow border outline) -->
+                                        <!-- Required Skills Polygon -->
                                         <polygon points="100,34 154,71 148,128 100,158 51,126 48,70" 
                                                  fill="none" 
                                                  stroke="var(--accent-yellow)" 
                                                  stroke-width="1.5">
                                         </polygon>
 
-                                        <!-- Your Skills Polygon (Teal filled shape) -->
+                                        <!-- Your Skills Polygon -->
                                         <polygon points="100,42 142,75 138,122 100,148 60,120 56,74" 
                                                  fill="rgba(13,148,136,0.3)" 
                                                  stroke="var(--primary-teal)" 
@@ -612,7 +627,7 @@
                                         <circle cx="48" cy="70" r="2.5" fill="var(--accent-yellow)"></circle>
                                     </svg>
 
-                                    <!-- Absolute Positioned 6-Axis Labels matching screenshot exactly -->
+                                    <!-- Absolute Positioned 6-Axis Labels -->
                                     <span style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); font-size: 0.75rem; font-weight: 600; color: var(--text-main);">Communication</span>
                                     <span style="position: absolute; top: 58px; right: -36px; font-size: 0.75rem; font-weight: 600; color: var(--text-main);">Technical Skills</span>
                                     <span style="position: absolute; bottom: 58px; right: -42px; font-size: 0.75rem; font-weight: 600; color: var(--text-main);">Problem Solving</span>
@@ -748,7 +763,7 @@
         </div>
 
         <!-- =======================================================
-             VIEW 4: LEARNING PATHWAY 
+             VIEW 4: LEARNING PATHWAY (UPDATED STEPPER)
         ======================================================== -->
         <div id="learning" class="tab-pane">
             <div class="top-header">
@@ -765,7 +780,7 @@
             <div class="card">
                 <div class="stepper">
                     <div class="step completed">
-                        <div class="step-circle"><i data-lucide="check" style="width:16px;"></i></div>
+                        <div class="step-circle"><i data-lucide="check" style="width:20px; height:20px; stroke-width: 3;"></i></div>
                         <div style="font-weight: 600; font-size: 0.9rem;">Foundation Skills</div>
                         <div style="font-size: 0.75rem; color: var(--primary-teal);">Completed</div>
                     </div>
@@ -775,17 +790,17 @@
                         <div style="font-size: 0.75rem; color: var(--accent-yellow);">In Progress</div>
                     </div>
                     <div class="step">
-                        <div class="step-circle"><i data-lucide="lock" style="width:16px;"></i></div>
+                        <div class="step-circle"><i data-lucide="lock" style="width:18px; height:18px;"></i></div>
                         <div style="font-weight: 600; font-size: 0.9rem;">Advanced Cert</div>
                         <div style="font-size: 0.75rem; color: var(--text-muted);">Locked</div>
                     </div>
                     <div class="step">
-                        <div class="step-circle"><i data-lucide="lock" style="width:16px;"></i></div>
+                        <div class="step-circle"><i data-lucide="lock" style="width:18px; height:18px;"></i></div>
                         <div style="font-weight: 600; font-size: 0.9rem;">Portfolio Projects</div>
                         <div style="font-size: 0.75rem; color: var(--text-muted);">Locked</div>
                     </div>
                     <div class="step">
-                        <div class="step-circle"><i data-lucide="lock" style="width:16px;"></i></div>
+                        <div class="step-circle"><i data-lucide="lock" style="width:18px; height:18px;"></i></div>
                         <div style="font-weight: 600; font-size: 0.9rem;">Job Ready</div>
                         <div style="font-size: 0.75rem; color: var(--text-muted);">Locked</div>
                     </div>
@@ -1183,7 +1198,7 @@
                 return 0;
             });
 
-    cards.forEach(card => grid.appendChild(card));
+            cards.forEach(card => grid.appendChild(card));
         }
 
         // Reset Filters Function
